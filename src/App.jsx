@@ -80,73 +80,132 @@ function App() {
 
     return streak;
   };
+  const handleDeleteHabit = (id) => {
+    setHabits(habits.filter((habit) => habit.id !== id));
+  };
   return (
-    <>
-      <section>
-        <h1>Habit Tracker</h1>
+    <main style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}>
+      <h1>Habit Tracker</h1>
 
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-          <button onClick={() => shiftWeek(-7)}>Previous Week</button>
-          <button onClick={() => shiftWeek(7)}>Next Week</button>
-        </div>
+      {/* 1. Time Travel Buttons */}
+      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+        <button onClick={() => shiftWeek(-7)}>Previous Week</button>
+        <button onClick={() => shiftWeek(7)}>Next Week</button>
+      </div>
 
-        <form onSubmit={onSubmit} style={{ marginBottom: "1rem" }}>
-          <input
-            type="text"
-            value={newHabitName}
-            onChange={(e) => setNewHabitName(e.target.value)}
-            placeholder="Enter a new habit..."
-          />
-          <button type="submit">Add Habit</button>
-        </form>
+      {/* 2. Add Habit Form */}
+      <form onSubmit={onSubmit} style={{ marginBottom: "1rem" }}>
+        <input
+          type="text"
+          value={newHabitName}
+          onChange={(e) => setNewHabitName(e.target.value)}
+          placeholder="Enter a new habit..."
+        />
+        <button type="submit">Add Habit</button>
+      </form>
 
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>Habit</th>
-              <th>Streak</th>
-              {weekDays.map((day) => (
-                <th key={day.toISOString()}>
-                  {day.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
+      {/* 3. The Grid Container */}
+      {(() => {
+        const todayStr = new Date().toLocaleDateString("en-CA");
+
+        return (
+          <div style={{ overflowX: "auto" }}>
+            {" "}
+            {/* 4. Makes table scrollable on mobile */}
+            <table
+              border="1"
+              cellPadding="8"
+              style={{ borderCollapse: "collapse", width: "100%" }}
+            >
+              <thead>
+                <tr>
+                  <th>Habit</th>
+                  <th>Streak</th>
+                  {weekDays.map((day) => {
+                    const dateStr = day.toLocaleDateString("en-CA");
+                    const isToday = dateStr === todayStr;
+                    return (
+                      <th
+                        key={dateStr}
+                        style={{
+                          backgroundColor: isToday ? "#fffacd" : "transparent",
+                        }}
+                      >
+                        {day.toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </th>
+                    );
                   })}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {habits.map((habit) => (
-              <tr key={habit.id}>
-                <td>{habit.name}</td>
-                <td
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    color: "#ff4757",
-                  }}
-                >
-                  {calculateStreak(habit.completedDates)} 🔥
-                </td>
-                {weekDays.map((day) => {
-                  const dateStr = day.toLocaleDateString("en-CA");
-                  return (
-                    <td key={dateStr} style={{ textAlign: "center" }}>
-                      <input
-                        type="checkbox"
-                        checked={habit.completedDates.includes(dateStr)}
-                        onChange={() => toggleHabit(habit.id, dateStr)}
-                      />
+                </tr>
+              </thead>
+              <tbody>
+                {habits.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      style={{ textAlign: "center", padding: "2rem" }}
+                    >
+                      No habits yet. Start tracking by adding one above!
                     </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-    </>
+                  </tr>
+                ) : (
+                  habits.map((habit) => (
+                    <tr key={habit.id}>
+                      <td>
+                        {habit.name}
+                        <button
+                          onClick={() => handleDeleteHabit(habit.id)}
+                          style={{
+                            marginLeft: "10px",
+                            fontSize: "0.8rem",
+                            color: "red",
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                      <td
+                        style={{
+                          textAlign: "center",
+                          fontWeight: "bold",
+                          color: "#ff4757",
+                        }}
+                      >
+                        {calculateStreak(habit.completedDates)} 🔥
+                      </td>
+                      {weekDays.map((day) => {
+                        const dateStr = day.toLocaleDateString("en-CA");
+                        const isToday = dateStr === todayStr;
+                        return (
+                          <td
+                            key={dateStr}
+                            style={{
+                              textAlign: "center",
+                              backgroundColor: isToday
+                                ? "#fffacd"
+                                : "transparent",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={habit.completedDates.includes(dateStr)}
+                              onChange={() => toggleHabit(habit.id, dateStr)}
+                            />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        );
+      })()}
+    </main>
   );
 }
 
