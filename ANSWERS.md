@@ -2,7 +2,7 @@
 
 ### 1. What stack and setup did you choose and why?
 
-I chose **React (bootstrapped with Vite)** and standard vanilla CSS. Coming from a heavy background in mobile development and cross-platform UI, React's component-based architecture and state hooks (like `useState` and `useEffect`) allowed me to build this web UI using paradigms I am already highly efficient with. I avoided external component libraries to keep the bundle lightweight and demonstrate core understanding of state and CSS.
+I chose **React (bootstrapped with Vite)** and standard vanilla CSS. Coming from a background in mobile development and cross-platform UI, React's component-based architecture and state hooks (like `useState` and `useEffect`) allowed me to build this web UI using paradigms I am already highly efficient with. I avoided external component libraries to keep the bundle lightweight and demonstrate core understanding of state and CSS.
 
 ### 2. What were your major design and UX decisions?
 
