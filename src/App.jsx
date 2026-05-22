@@ -41,11 +41,35 @@ function App() {
   };
 
   const weekDays = getWeekDays(currentWeekStart);
+  const toggleHabit = (habitId, dateStr) => {
+    setHabits(
+      habits.map((habit) => {
+        if (habit.id !== habitId) return habit;
+        const newDates = habit.completedDates.includes(dateStr)
+          ? habit.completedDates.filter((d) => d !== dateStr)
+          : [...habit.completedDates, dateStr];
+
+        return { ...habit, completedDates: newDates };
+      }),
+    );
+  };
+
+  const shiftWeek = (days) => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(newDate.getDate() + days);
+    setCurrentWeekStart(newDate);
+  };
   return (
     <>
       <section>
         <h1>Habit Tracker</h1>
-        <form onSubmit={onSubmit}>
+
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+          <button onClick={() => shiftWeek(-7)}>Previous Week</button>
+          <button onClick={() => shiftWeek(7)}>Next Week</button>
+        </div>
+
+        <form onSubmit={onSubmit} style={{ marginBottom: "1rem" }}>
           <input
             type="text"
             value={newHabitName}
@@ -54,6 +78,43 @@ function App() {
           />
           <button type="submit">Add Habit</button>
         </form>
+
+        <table border="1" cellPadding="8">
+          <thead>
+            <tr>
+              <th>Habit</th>
+              {weekDays.map((day) => (
+                <th key={day.toISOString()}>
+                  {day.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {habits.map((habit) => (
+              <tr key={habit.id}>
+                <td>{habit.name}</td>
+                {weekDays.map((day) => {
+                  // Using 'en-CA' safely formats the date as YYYY-MM-DD in the local timezone
+                  const dateStr = day.toLocaleDateString("en-CA");
+                  return (
+                    <td key={dateStr} style={{ textAlign: "center" }}>
+                      <input
+                        type="checkbox"
+                        checked={habit.completedDates.includes(dateStr)}
+                        onChange={() => toggleHabit(habit.id, dateStr)}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
     </>
   );
