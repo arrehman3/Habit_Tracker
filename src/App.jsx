@@ -59,6 +59,27 @@ function App() {
     newDate.setDate(newDate.getDate() + days);
     setCurrentWeekStart(newDate);
   };
+  const calculateStreak = (completedDates) => {
+    let streak = 0;
+    let currentDate = new Date();
+
+    const todayStr = currentDate.toLocaleDateString("en-CA");
+    if (!completedDates.includes(todayStr)) {
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    while (true) {
+      const dateStr = currentDate.toLocaleDateString("en-CA");
+      if (completedDates.includes(dateStr)) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  };
   return (
     <>
       <section>
@@ -83,6 +104,7 @@ function App() {
           <thead>
             <tr>
               <th>Habit</th>
+              <th>Streak</th>
               {weekDays.map((day) => (
                 <th key={day.toISOString()}>
                   {day.toLocaleDateString("en-US", {
@@ -98,8 +120,16 @@ function App() {
             {habits.map((habit) => (
               <tr key={habit.id}>
                 <td>{habit.name}</td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    color: "#ff4757",
+                  }}
+                >
+                  {calculateStreak(habit.completedDates)} 🔥
+                </td>
                 {weekDays.map((day) => {
-                  // Using 'en-CA' safely formats the date as YYYY-MM-DD in the local timezone
                   const dateStr = day.toLocaleDateString("en-CA");
                   return (
                     <td key={dateStr} style={{ textAlign: "center" }}>
