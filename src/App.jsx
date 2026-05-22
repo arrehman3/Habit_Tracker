@@ -84,17 +84,20 @@ function App() {
     setHabits(habits.filter((habit) => habit.id !== id));
   };
   return (
-    <main style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}>
-      <h1>Habit Tracker</h1>
-
-      {/* 1. Time Travel Buttons */}
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-        <button onClick={() => shiftWeek(-7)}>Previous Week</button>
-        <button onClick={() => shiftWeek(7)}>Next Week</button>
+    <main className="container">
+      <div className="header-controls">
+        <h1 style={{ color: "purple" }}>Habit Tracker</h1>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button className="btn-secondary" onClick={() => shiftWeek(-7)}>
+            ← Prev
+          </button>
+          <button className="btn-secondary" onClick={() => shiftWeek(7)}>
+            Next →
+          </button>
+        </div>
       </div>
 
-      {/* 2. Add Habit Form */}
-      <form onSubmit={onSubmit} style={{ marginBottom: "1rem" }}>
+      <form onSubmit={onSubmit} className="habit-form">
         <input
           type="text"
           value={newHabitName}
@@ -104,33 +107,21 @@ function App() {
         <button type="submit">Add Habit</button>
       </form>
 
-      {/* 3. The Grid Container */}
       {(() => {
         const todayStr = new Date().toLocaleDateString("en-CA");
 
         return (
-          <div style={{ overflowX: "auto" }}>
-            {" "}
-            {/* 4. Makes table scrollable on mobile */}
-            <table
-              border="1"
-              cellPadding="8"
-              style={{ borderCollapse: "collapse", width: "100%" }}
-            >
+          <div className="table-wrapper">
+            <table>
               <thead>
                 <tr>
-                  <th>Habit</th>
+                  <th className="text-left">Habit</th>
                   <th>Streak</th>
                   {weekDays.map((day) => {
                     const dateStr = day.toLocaleDateString("en-CA");
                     const isToday = dateStr === todayStr;
                     return (
-                      <th
-                        key={dateStr}
-                        style={{
-                          backgroundColor: isToday ? "#fffacd" : "transparent",
-                        }}
-                      >
+                      <th key={dateStr} className={isToday ? "is-today" : ""}>
                         {day.toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "short",
@@ -146,34 +137,35 @@ function App() {
                   <tr>
                     <td
                       colSpan="9"
-                      style={{ textAlign: "center", padding: "2rem" }}
+                      style={{
+                        textAlign: "center",
+                        padding: "3rem",
+                        color: "#64748b",
+                      }}
                     >
-                      No habits yet. Start tracking by adding one above!
+                      No habits yet. Add one above to get started!
                     </td>
                   </tr>
                 ) : (
                   habits.map((habit) => (
                     <tr key={habit.id}>
-                      <td>
-                        {habit.name}
+                      <td
+                        className="text-left"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>{habit.name}</span>
                         <button
+                          className="btn-delete"
                           onClick={() => handleDeleteHabit(habit.id)}
-                          style={{
-                            marginLeft: "10px",
-                            fontSize: "0.8rem",
-                            color: "red",
-                          }}
                         >
                           Delete
                         </button>
                       </td>
-                      <td
-                        style={{
-                          textAlign: "center",
-                          fontWeight: "bold",
-                          color: "#ff4757",
-                        }}
-                      >
+                      <td style={{ fontWeight: "bold", color: "#ff4757" }}>
                         {calculateStreak(habit.completedDates)} 🔥
                       </td>
                       {weekDays.map((day) => {
@@ -182,12 +174,7 @@ function App() {
                         return (
                           <td
                             key={dateStr}
-                            style={{
-                              textAlign: "center",
-                              backgroundColor: isToday
-                                ? "#fffacd"
-                                : "transparent",
-                            }}
+                            className={isToday ? "is-today" : ""}
                           >
                             <input
                               type="checkbox"
